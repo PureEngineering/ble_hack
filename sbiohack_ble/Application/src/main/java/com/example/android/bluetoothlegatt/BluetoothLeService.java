@@ -27,8 +27,14 @@ import android.widget.*;
 import android.view.*;
 import android.graphics.*;
 import android.view.ViewGroup.*;
+
+import java.security.Policy;
 import java.text.DecimalFormat;
 import java.util.Objects;
+
+import android.hardware.Camera;
+import android.hardware.Camera.Parameters;
+import android.view.View;
 
 
 public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback {
@@ -57,6 +63,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	private BluetoothAdapter mBluetoothAdapter;
 
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
+	public static Camera cam = null;// has to be static, otherwise onDestroy() destroys it
 
 	private Handler handler = new Handler();
 	public void updateView()
@@ -215,6 +223,16 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	}
 
+	public void flashLightOn(View view)
+	{
+
+		//todo
+	}
+
+	public void flashLightOff(View view) {
+		//todo
+	}
+
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -314,6 +332,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	}
 	/* BluetoothAdapter.LeScanCallback */
 
+	public static final int THRESHHOLD_RSSI =(-70);
 	@Override
 	public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
 	{
@@ -325,7 +344,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		if(Objects.equals("EB:02:A3:22:EC:46", device.getAddress()))
 		{
-			//my fitbit charge HR
+			//sashi fitbit charge HR
 
 			Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
@@ -339,12 +358,39 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			}
 		}
 
+		if(Objects.equals("E2:E1:3F:8A:1F:BB", device.getAddress()))
+		{
+			//copper colored tracker
 
-		if(!Objects.equals("tkr", device.getName()))
+			if (rssi > THRESHHOLD_RSSI) {
+				//do cool stuff here
+				Log.i(TAG, "copper colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+
+				flashLightOn(mScrollView);
+			}
+
+		}
+
+		if(Objects.equals("CA:6D:C0:8A:81:CB", device.getAddress()))
+		{
+			//silver colored tracker
+
+			//do cool stuff here
+			if (rssi > THRESHHOLD_RSSI) {
+				//do cool stuff here
+				Log.i(TAG, "silver colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+
+			}
+
+		}
+
+
+
+		//if(!Objects.equals("tkr", device.getName()))
 		{
 			if(device.getName()!= null)
 			{
-				Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+				//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
 				/*
 				if (rssi > max_rssi) {
