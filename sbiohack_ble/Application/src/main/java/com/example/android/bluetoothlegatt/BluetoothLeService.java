@@ -28,6 +28,7 @@ import android.view.*;
 import android.graphics.*;
 import android.view.ViewGroup.*;
 import java.text.DecimalFormat;
+import java.util.Objects;
 
 
 public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback {
@@ -46,6 +47,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	String sensor_address;
 	int sample;
 	int max_rssi = -255;
+	int last_rssi = -255;
 
 	int backgroundColor;
 
@@ -270,7 +272,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		//Scan for devices advertising the thermometer service
 		mBluetoothAdapter.startLeScan( this);
 
-		mHandler.postDelayed(mStopRunnable, 2500);
+		mHandler.postDelayed(mStopRunnable, 5000);
 		max_rssi = -255;
 	}
 
@@ -281,31 +283,33 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	void updateUI()
 	{
+		int background_level;
 
 
 		addressTextView.setText(sensor_address);
 
 		rssiTextView.setText(String.valueOf(max_rssi));
 
+
+
+		backgroundColor = Math.max(max_rssi,last_rssi);
+
 		backgroundColor = max_rssi +128;
 
-		blank1TextView.setText(String.valueOf(backgroundColor));
 
-		if(backgroundColor < 45) {
+		if(backgroundColor < 50) {
 
 			backgroundColor = 0;
 		}
 		else
 		{
-
-			if(backgroundColor >95)
-			{
-				backgroundColor = 95;
-			}
+			backgroundColor = (int) (Math.log((double)backgroundColor/25.5)*95.0);
 		}
 
-
+		blank1TextView.setText(String.valueOf(backgroundColor));
 		mScrollView.setBackgroundColor(ColorUtils.XYZToColor(backgroundColor,backgroundColor,backgroundColor));
+
+		last_rssi = max_rssi;
 
 	}
 	/* BluetoothAdapter.LeScanCallback */
@@ -317,14 +321,24 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		int start_index = 8;
 
 
-		Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+		//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
-		if(rssi > max_rssi )
+
+		if(!Objects.equals("tkr", device.getName()))
 		{
-			max_rssi = rssi;
-			sensor_address = device.getAddress() +' '+ device.getName();
-			sample=  (scanRecord[start_index++]&0xff|((scanRecord[start_index++]&0xff)<<8));
-			updateUI();
+			if(device.getName()!= null)
+			{
+				Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+
+				if (rssi > max_rssi) {
+
+					max_rssi = rssi;
+					sensor_address = device.getAddress() + ' ' + device.getName();
+					sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
+					updateUI();
+
+				}
+			}
 		}
 
 
