@@ -323,6 +323,22 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
+		if(Objects.equals("EB:02:A3:22:EC:46", device.getAddress()))
+		{
+			//my fitbit charge HR
+
+			Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+
+			if (rssi > max_rssi) {
+
+				max_rssi = rssi;
+				sensor_address = device.getAddress() + ' ' + device.getName();
+				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
+				updateUI();
+
+			}
+		}
+
 
 		if(!Objects.equals("tkr", device.getName()))
 		{
@@ -330,6 +346,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			{
 				Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
+				/*
 				if (rssi > max_rssi) {
 
 					max_rssi = rssi;
@@ -338,6 +355,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 					updateUI();
 
 				}
+				*/
+
 			}
 		}
 
