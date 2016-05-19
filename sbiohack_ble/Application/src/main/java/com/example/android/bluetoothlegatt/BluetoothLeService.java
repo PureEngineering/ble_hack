@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import android.speech.tts.TextToSpeech;
 import android.support.v4.graphics.ColorUtils;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ import android.view.ViewGroup.*;
 
 import java.security.Policy;
 import java.text.DecimalFormat;
+import java.util.Locale;
 import java.util.Objects;
 
 import android.hardware.Camera;
@@ -37,10 +39,12 @@ import android.hardware.Camera.Parameters;
 import android.view.View;
 
 
-public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback {
+public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback, TextToSpeech.OnInitListener{
 	private static final String TAG = "BLE";
 
 
+	private TextToSpeech mTts;
+	private boolean speechReady = false;
 
 	ScrollView mScrollView;
 	PowerManager powerManager;
@@ -156,6 +160,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		powerManager = (PowerManager)getSystemService(Context.POWER_SERVICE);
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+		mTts = new TextToSpeech(this, this);
 
 		Log.i(TAG, TAG + "Activity started");
 
@@ -221,6 +226,39 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 
 
+	}
+
+	public void onInit(int status) {
+
+		if (status == TextToSpeech.SUCCESS)
+		{
+			Log.d(TAG, "TextToSpeech init SUCCESS code:" + status);
+			mTts.setLanguage(Locale.US);
+			mTts.setPitch(1.2F);
+			mTts.setSpeechRate(1.2F);
+			speechReady = true;
+			speakText("Voice Enabled");
+		}
+		else
+		{
+			Log.e(TAG, "TextToSpeech init failed code:" + status);
+		}
+	}
+
+	 void speakText(String speakText)
+	{
+		if((speechReady == true) )
+		{
+			mTts.speak(speakText,TextToSpeech.QUEUE_FLUSH,  null,null);
+		}
+	}
+
+	 void speakTextQueue(String speakText)
+	{
+		if((speechReady == true) )
+		{
+			mTts.speak(speakText,TextToSpeech.QUEUE_ADD,  null,null);
+		}
 	}
 
 	public void flashLightOn(View view)
@@ -355,6 +393,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
 				updateUI();
 
+				speakTextQueue("Hello Sashi");
+
 			}
 		}
 
@@ -366,7 +406,6 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				//do cool stuff here
 				Log.i(TAG, "copper colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
-				flashLightOn(mScrollView);
 			}
 
 		}
