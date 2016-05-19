@@ -63,6 +63,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 
+	private boolean saidHello = false;
+
 
 	private BluetoothAdapter mBluetoothAdapter;
 
@@ -393,7 +395,10 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
 				updateUI();
 
-				speakTextQueue("Hello Sashi");
+				if(saidHello == false) {
+					speakTextQueue("Hello Sashi");
+					saidHello = true;
+				}
 
 			}
 		}
