@@ -45,6 +45,9 @@ import android.provider.Settings;
 public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback, TextToSpeech.OnInitListener{
 	private static final String TAG = "BLE";
 
+	static final int MAX_VOLUME = (50);
+
+	public static final int THRESHHOLD_RSSI =(-90);
 
 	private TextToSpeech mTts;
 	private boolean speechReady = false;
@@ -69,7 +72,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 
-	private boolean saidHello = false;
+	private int saidHello = 0;
 
 	private boolean someoneHome = false;
 
@@ -275,7 +278,6 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			mTts.setPitch(1.2F);
 			mTts.setSpeechRate(1.2F);
 			speechReady = true;
-			speakText("Voice Enabled");
 		}
 		else
 		{
@@ -378,6 +380,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			setVolume(convertRSSItoVolume(last_rssi0),convertRSSItoVolume(last_rssi1));
 			Log.i(TAG, "Nobody home, ");
 		}
+		saidHello--;
 
 		someoneHome = false;
 
@@ -402,7 +405,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		return Math.pow(10d, ((double) txPower - rssi) / (10 * 2));
 	}
 
-	static final int MAX_VOLUME = (30);
+
 	int convertRSSItoVolume(int rssi)
 	{
 		int volume;
@@ -429,11 +432,13 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		addressTextView.setText(sensor_address);
 
-		rssiTextView.setText(String.valueOf(max_rssi));
+		//rssiTextView.setText(String.valueOf(max_rssi));
+		rssiTextView.setText(String.valueOf(last_rssi0) + ' '  +  String.valueOf(last_rssi1));
 
-		backgroundColor = Math.max(max_rssi,last_rssi);
+		backgroundColor = max_rssi;
+		//backgroundColor = Math.max(last_rssi0,last_rssi1);
 
-		backgroundColor = max_rssi +128;
+		backgroundColor = backgroundColor +128;
 
 		if(backgroundColor < 50) {
 
@@ -458,6 +463,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	public void setVolume(int newVolume0,int newVolume1) {
 
 		volumeTextView.setText("Volume0:" + String.valueOf(newVolume0) + " Volume1:" + String.valueOf(newVolume1));
+
+		rssiTextView.setText(String.valueOf(last_rssi0) + ' '  +  String.valueOf(last_rssi1));
 
 		//newVolume = (lastSetVolume+ newVolume)/2;  //average the volume, so it doesnt get too loud too fast
 		//lastSetVolume = newVolume;
@@ -509,7 +516,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	}
 
-	public static final int THRESHHOLD_RSSI =(-80);
+
 	@Override
 	public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
 	{
@@ -519,8 +526,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
-		if(1==0)
-		//if(Objects.equals("EB:02:A3:22:EC:46", device.getAddress()))
+		//if(1==0)
+		if(Objects.equals("EB:02:A3:22:EC:46", device.getAddress()))
 		{
 			//sashi fitbit charge HR
 
@@ -530,14 +537,15 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 				max_rssi = rssi;
 				sensor_address = device.getAddress() + ' ' + device.getName();
-				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
+				//sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
 				updateUI();
 
 
-				if(saidHello == false) {
+				if(saidHello < 0) {
 					speakTextQueue("Hello");
-					saidHello = true;
+					saidHello=50;
 				}
+				saidHello+=3;
 			}
 		}
 

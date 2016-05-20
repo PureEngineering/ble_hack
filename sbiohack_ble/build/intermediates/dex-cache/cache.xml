@@ -1,3 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
 
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8a034dd16c0dfd75fe86c52c2cd581592acc684a">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.3.0_3db1a4bb3f77d84e4323d56eb9820a9049a0b0e1\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="b7c0499caeaca3eaec120013daaeae6876c2c04d">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_db14aeb35130167e638012802c573f2ba2ea427e\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.3.0\support-annotations-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="db7791d75a07fef9844d06236c1c59ba7bf6997c">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.3.0_785093d3d585776c59e0d86d6cfbfe23ae69ee68\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="1f4afc707cdfa6cd597088f08940858b01869541">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_149c32a3c79cb5d3892d971afb5541e730a80e53\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\exploded-aar\com.android.support\support-v13\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="a809555a2599054c3dcd1bf82b089315ac3a11df">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v13-23.3.0_bc1a4bd6eada01158a93c29cb521632950690574\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\exploded-aar\com.android.support\support-v13\23.3.0\jars\libs\internal_impl-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="8813bdcf7583107c4873150075d17c8072ec50cf">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.3.0_a0d635725fecb0f7efa46bc1dbe324a7fc41aaf7\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.3.0\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="82ce13fd19cdfde0e392f03c27edeba8d4333648">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-cardview-v7-23.3.0_3d2d17c0f276a8cb20e2e94157df169312ef34d5\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.3.0\jars\libs\internal_impl-23.3.0.jar"
+        jumboMode="true"
+        revision="23.0.3"
+        sha1="4da5a4d697d32497c6f85567a5112e62fdfd0676">
+        <dex dex="C:\Users\sashi\AndroidStudioProjects\ble_hack\sbiohack_ble\Application\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.3.0_724f78475d3a9269a34a6a58e36c4eb2c62b7250\classes.dex" />
+    </item>
+
+</items>
