@@ -6,6 +6,23 @@ import java.io.*;
 
 public class musicLoverConnection
 {
+
+    public static String playMusic()
+    {
+        return getUrlContents("http://10.1.176.142:3000/api/play");
+    }
+
+
+    public static String setKitchenVolume(int volume)
+    {
+        return getUrlContents("http://10.1.176.142:5005/Kitchen/volume/"+volume);
+    }
+
+    public static String setDenVolume(int volume)
+    {
+        return getUrlContents("http://10.1.176.142:5005/Den/volume/"+volume);
+    }
+
     public static String setVolume(int volume)
     {
         return getUrlContents("http://10.1.176.142:3000/api/setVolume?volume="+volume);
@@ -45,7 +62,7 @@ public class musicLoverConnection
         }
         catch(Exception e)
         {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
         return content.toString();
     }
