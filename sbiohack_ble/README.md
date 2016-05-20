@@ -2,12 +2,10 @@
 Android BluetoothLeGatt Sample
 ===================================
 
-This is a ble sniffing app that can track ble advertising beacons. Once a beacon of interest is seen the app can take action on it. In this case we can do text to voice on the arrival of a user, control the screen, send http put commands to a server. In teh last case we control the volume of a sonos stereo system to tack the user they approach the speaker. The Speaker has a ble beacon placed near it. 
+This is a ble sniffing app that can track ble advertising beacons. Once a beacon of interest is seen the app can take action on it. In this case we can do text to voice on the arrival of a user, control the screen, send http put commands to a server. In the last case we control the volume of a sonos stereo system to tack the user they approach the speaker. The Speaker has a ble beacon placed near it. 
 
 Introduction
 ------------
-
-
 
 [1]:http://developer.android.com/reference/android/app/Service.html
 [2]:https://developer.android.com/reference/android/bluetooth/BluetoothGatt.html
@@ -18,8 +16,6 @@ Pre-requisites
 - Android SDK v23
 - Android Build Tools v23.0.3
 - Android Support Repository
-
-
 
 Getting Started
 ---------------
