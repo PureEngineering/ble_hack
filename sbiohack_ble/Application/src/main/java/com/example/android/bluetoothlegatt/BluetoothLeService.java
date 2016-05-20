@@ -66,6 +66,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	private boolean saidHello = false;
 
 
+	musicLoverConnection localMusicLoverConnection;
+
 	private BluetoothAdapter mBluetoothAdapter;
 
 	private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
@@ -130,8 +132,6 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
-		int width = size.x;
-		int height = size.y;
 
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
 		{
@@ -173,6 +173,11 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		 */
 		BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
 		mBluetoothAdapter = manager.getAdapter();
+
+		localMusicLoverConnection = new musicLoverConnection();
+
+		StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+		StrictMode.setThreadPolicy(policy);
 
 
 		mScrollView = new ScrollView(getApplicationContext());
@@ -339,6 +344,23 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		mHandler.postDelayed(mStartRunnable, 100);
 	}
 
+
+	int convertRSSItoVolume(int rssi)
+	{
+		int volume;
+		volume = max_rssi +128;
+
+		if(volume < 50) {
+
+			volume = 0;
+		}
+		else
+		{
+			volume = (int) (Math.log((double)volume/25.5)*95.0);
+		}
+		return volume/10;  ////10 for testing.
+	}
+
 	void updateUI()
 	{
 		int background_level;
@@ -348,12 +370,9 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		rssiTextView.setText(String.valueOf(max_rssi));
 
-
-
 		backgroundColor = Math.max(max_rssi,last_rssi);
 
 		backgroundColor = max_rssi +128;
-
 
 		if(backgroundColor < 50) {
 
@@ -366,6 +385,10 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		blank1TextView.setText(String.valueOf(backgroundColor));
 		mScrollView.setBackgroundColor(ColorUtils.XYZToColor(backgroundColor,backgroundColor,backgroundColor));
+
+
+
+
 
 		last_rssi = max_rssi;
 
@@ -395,6 +418,11 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
 				updateUI();
 
+
+				localMusicLoverConnection.setVolume(convertRSSItoVolume(Math.max(max_rssi,last_rssi)));
+				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
+
+
 				if(saidHello == false) {
 					speakTextQueue("Hello Sashi");
 					saidHello = true;
@@ -403,6 +431,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			}
 		}
 
+		//E8:71:05:C2:68:A6
 		if(Objects.equals("E2:E1:3F:8A:1F:BB", device.getAddress()))
 		{
 			//copper colored tracker
@@ -410,6 +439,9 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			if (rssi > THRESHHOLD_RSSI) {
 				//do cool stuff here
 				Log.i(TAG, "copper colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+
+				localMusicLoverConnection.setVolume(convertRSSItoVolume(rssi));
+				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
 
 			}
 
@@ -424,6 +456,9 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				//do cool stuff here
 				Log.i(TAG, "silver colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
+				localMusicLoverConnection.setVolume(convertRSSItoVolume(rssi));
+				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
+
 			}
 
 		}
@@ -434,7 +469,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		{
 			if(device.getName()!= null)
 			{
-				//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+				Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
 				/*
 				if (rssi > max_rssi) {
