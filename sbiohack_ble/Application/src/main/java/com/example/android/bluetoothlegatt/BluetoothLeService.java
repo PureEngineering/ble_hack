@@ -38,6 +38,9 @@ import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.view.View;
 
+import android.provider.Settings;
+
+
 
 public class BluetoothLeService extends Activity implements BluetoothAdapter.LeScanCallback, TextToSpeech.OnInitListener{
 	private static final String TAG = "BLE";
@@ -202,6 +205,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		mScrollView.setBackgroundColor(Color.BLACK);
 
+		//setAutoOrientationEnabled(getApplicationContext(),false);
+
 
 		TableLayout mainLayout = new TableLayout(getApplicationContext());
 
@@ -248,6 +253,15 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 		setContentView(mScrollView);
 
+
+
+
+
+	}
+
+	public static void setAutoOrientationEnabled(Context context, boolean enabled)
+	{
+		Settings.System.putInt( context.getContentResolver(), Settings.System.ACCELEROMETER_ROTATION, enabled ? 1 : 0);
 
 
 	}
