@@ -61,10 +61,15 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 
 	int backgroundColor;
 
+	int averageRSSI = 0;
+
 	DecimalFormat twoDForm = new DecimalFormat("#.##");
 
 	private boolean saidHello = false;
 
+	private boolean someoneHome = false;
+
+	int lastSetVolume;
 
 	musicLoverConnection localMusicLoverConnection;
 
@@ -335,8 +340,16 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		//Scan for devices advertising the thermometer service
 		mBluetoothAdapter.startLeScan( this);
 
-		mHandler.postDelayed(mStopRunnable, 5000);
+		mHandler.postDelayed(mStopRunnable, 3000);
 		max_rssi = -255;
+
+		if(someoneHome == false)
+		{
+			lastSetVolume /=1.25;
+			localMusicLoverConnection.setVolume(lastSetVolume);
+			Log.i(TAG, "Nobody home, reducing volume by 1.25, " + localMusicLoverConnection.getVolume());
+		}
+		someoneHome = false;
 	}
 
 	private void stopScan() {
@@ -344,21 +357,29 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		mHandler.postDelayed(mStartRunnable, 100);
 	}
 
+	static final int MAX_VOLUME = (30);
 
 	int convertRSSItoVolume(int rssi)
 	{
 		int volume;
-		volume = max_rssi +128;
 
-		if(volume < 50) {
+		averageRSSI += 3*rssi;
+		averageRSSI /=4;
 
-			volume = 0;
-		}
-		else
+		volume = rssi +128;
+
+		volume = (int) (Math.log((double)volume/25.5)*95.0);
+
+		volume = volume/3;
+
+		if(volume > MAX_VOLUME)
 		{
-			volume = (int) (Math.log((double)volume/25.5)*95.0);
+			Log.i(TAG, "volume TOO LOUD, setting to MAX");
+			volume = MAX_VOLUME;
 		}
-		return volume/10;  ////10 for testing.
+
+		Log.i(TAG, "volume calculated to :"+volume + "rssi used "+rssi + "ave "+averageRSSI );
+		return volume;  ////10 for testing.
 	}
 
 	void updateUI()
@@ -395,7 +416,24 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 	}
 	/* BluetoothAdapter.LeScanCallback */
 
-	public static final int THRESHHOLD_RSSI =(-70);
+
+	public int setVolume(int newVolume) {
+
+		localMusicLoverConnection.setVolume(newVolume);
+		Log.i(TAG, "" + localMusicLoverConnection.getVolume());
+
+		lastSetVolume = newVolume;
+		someoneHome = true;
+		return lastSetVolume;
+	}
+
+	public void processGoodBLE(BluetoothDevice device, int rssi, byte[] scanRecord) {
+
+		setVolume(convertRSSItoVolume(rssi));
+
+	}
+
+	public static final int THRESHHOLD_RSSI =(-90);
 	@Override
 	public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
 	{
@@ -418,10 +456,8 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 				sample = (scanRecord[start_index++] & 0xff | ((scanRecord[start_index++] & 0xff) << 8));
 				updateUI();
 
-
-				localMusicLoverConnection.setVolume(convertRSSItoVolume(Math.max(max_rssi,last_rssi)));
-				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
-
+				//localMusicLoverConnection.setVolume(convertRSSItoVolume(rssi));
+				//Log.i(TAG, "" + localMusicLoverConnection.getVolume());
 
 				if(saidHello == false) {
 					speakTextQueue("Hello Sashi");
@@ -431,7 +467,17 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			}
 		}
 
-		//E8:71:05:C2:68:A6
+		if(Objects.equals("E8:71:05:C2:68:A6", device.getAddress()))
+		{
+			//kevin silver colored
+			if (rssi > THRESHHOLD_RSSI) {
+				//do cool stuff here
+				Log.i(TAG, "kevin silver colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+				processGoodBLE(device,  rssi, scanRecord);
+			}
+		}
+
+		//
 		if(Objects.equals("E2:E1:3F:8A:1F:BB", device.getAddress()))
 		{
 			//copper colored tracker
@@ -439,28 +485,20 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 			if (rssi > THRESHHOLD_RSSI) {
 				//do cool stuff here
 				Log.i(TAG, "copper colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
-
-				localMusicLoverConnection.setVolume(convertRSSItoVolume(rssi));
-				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
-
+				processGoodBLE(device,  rssi, scanRecord);
 			}
-
 		}
 
 		if(Objects.equals("CA:6D:C0:8A:81:CB", device.getAddress()))
 		{
 			//silver colored tracker
-
 			//do cool stuff here
 			if (rssi > THRESHHOLD_RSSI) {
 				//do cool stuff here
 				Log.i(TAG, "silver colored tracker BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
-				localMusicLoverConnection.setVolume(convertRSSItoVolume(rssi));
-				Log.i(TAG, "" + localMusicLoverConnection.getVolume());
-
+				processGoodBLE(device,  rssi, scanRecord);
 			}
-
 		}
 
 
@@ -469,7 +507,7 @@ public class BluetoothLeService extends Activity implements BluetoothAdapter.LeS
 		{
 			if(device.getName()!= null)
 			{
-				Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
+				//Log.i(TAG, "BLE Device: " + device.getName() +":" + device.getAddress() + " @ " + rssi + " scanRecord: " + bytesToHex(scanRecord));
 
 				/*
 				if (rssi > max_rssi) {
