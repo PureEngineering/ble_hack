@@ -2,8 +2,7 @@
 Android BluetoothLeGatt Sample
 ===================================
 
-This HACKS the the Bluetooth LE Generic Attribute Profile (GATT)
-to transmit arbitrary data between devices.
+This is a ble sniffing app that can track ble advertising beacons. Once a beacon of interest is seen the app can take action on it. In this case we can do text to voice on the arrival of a user, control the screen, send http put commands to a server. In teh last case we control the volume of a sonos stereo system to tack the user they approach the speaker. The Speaker has a ble beacon placed near it. 
 
 Introduction
 ------------
@@ -32,7 +31,7 @@ Support
 -------
 
 NO support!
-but you can look here
+but you can look here if you are lost. 
 
 - Google+ Community: https://plus.google.com/communities/105153134372062985968
 - Stack Overflow: http://stackoverflow.com/questions/tagged/android
